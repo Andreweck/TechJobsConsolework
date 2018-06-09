@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -10,6 +11,38 @@ namespace TechJobsConsole
         static List<Dictionary<string, string>> AllJobs = new List<Dictionary<string, string>>();
         static bool IsDataLoaded = false;
 
+        public static List<Dictionary<string, string>> FindByValue(string term)
+        {
+            LoadData();
+
+            List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
+
+            foreach (Dictionary<string, string> row in AllJobs)
+            {
+                List<string> forstring = row.Keys.ToList();
+                foreach (string k in forstring)
+                {
+                    string aValue = row[k].ToLower();
+                    if (aValue.Contains(term.ToLower()))
+                    {
+                        if (!jobs.Contains(row))
+
+                        { 
+                            jobs.Add(row);
+                        }
+                        else
+                        {
+
+                        }
+                }
+
+                }
+
+                
+            }
+
+            return jobs;
+        }
         public static List<Dictionary<string, string>> FindAll()
         {
             LoadData();
@@ -35,6 +68,7 @@ namespace TechJobsConsole
                     values.Add(aValue);
                 }
             }
+            
             return values;
         }
 
@@ -47,12 +81,16 @@ namespace TechJobsConsole
 
             foreach (Dictionary<string, string> row in AllJobs)
             {
-                string aValue = row[column];
+                string aValue = row[column].ToLower();
+               
+                
+                    if (aValue.Contains(value.ToLower()))
+                        { 
+                            jobs.Add(row);
+                        }
+                
 
-                if (aValue.Contains(value))
-                {
-                    jobs.Add(row);
-                }
+                
             }
 
             return jobs;
@@ -71,7 +109,7 @@ namespace TechJobsConsole
 
             List<string[]> rows = new List<string[]>();
 
-            using (StreamReader reader = File.OpenText("job_data.csv"))
+            using (StreamReader reader = File.OpenText(@"c:\Users\usr\source\repos\TechJobsConsole\src\TechJobsConsole\job_data.csv"))
             {
                 while (reader.Peek() >= 0)
                 {

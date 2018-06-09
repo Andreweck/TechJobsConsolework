@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace TechJobsConsole
 {
@@ -63,7 +66,8 @@ namespace TechJobsConsole
                     // Fetch results
                     if (columnChoice.Equals("all"))
                     {
-                        Console.WriteLine("Search all fields not yet implemented.");
+                        searchResults = JobData.FindByValue(searchTerm);
+                        PrintJobs(searchResults);
                     }
                     else
                     {
@@ -118,7 +122,106 @@ namespace TechJobsConsole
 
         private static void PrintJobs(List<Dictionary<string, string>> someJobs)
         {
-            Console.WriteLine("printJobs is not implemented yet");
+            
+            
+                StreamReader needabook = new StreamReader(@"c:\Users\usr\source\repos\TechJobsConsole\src\TechJobsConsole\job_data.csv");
+            
+                List<string> preList = new List<string>();
+
+                List<string[]> final_list = new List<string[]>();
+
+                List<string> listValue = new List<string> { };
+
+                StringBuilder arrayValue = new StringBuilder();
+
+                bool isinQuotes = false;
+
+                List<Dictionary<string, string>> finalData = new List<Dictionary<string, string>>();
+
+                Dictionary<string, string> dictValue = new Dictionary<string, string>();
+
+            List<string> searchList = new List<string>();
+
+                while (needabook.Peek() > 0)
+                {
+                    preList.Add(needabook.ReadLine());
+                }
+
+            foreach (string i in preList)
+            {
+                foreach (char a in i)
+                {
+                    if (a.Equals('"'))
+                    {
+                        isinQuotes = !isinQuotes;
+                        arrayValue.Append(a);
+                    }
+                    else if (a.Equals(','))
+                    {
+                        if (isinQuotes == false)
+                        {
+                            listValue.Add(arrayValue.ToString());
+                            arrayValue.Clear();
+                        }
+                        else
+                        {
+                            arrayValue.Append(a);
+                        }
+                    }
+                    else
+                    {
+                        arrayValue.Append(a);
+                    }
+
+                }
+                listValue.Add(arrayValue.ToString());
+                arrayValue.Clear();
+                final_list.Add(listValue.ToArray());
+                listValue = new List<string>();
+            }
+
+            string[] firstPostList = final_list[0];
+
+            final_list.Remove(firstPostList);
+
+            foreach (string[] i in final_list)
+
+            {
+
+                for (int a = 0; a < i.Count(); a++)
+
+                {
+
+                    dictValue.Add(firstPostList[a], i[a]);
+
+
+                }
+                finalData.Add(dictValue);
+                dictValue = new Dictionary<string, string>();
+
+            }
+            if (someJobs.Count.Equals(0))
+            {
+                Console.WriteLine("There are no results to display!");
+            }
+            else
+            {
+                for (int z = 0; z < someJobs.Count(); z++)
+                {
+                    //if (someJobs.Contains(finalData[z]))
+                    //{
+                    List<string> lines = new List<string>(someJobs[z].Values);
+                    List<string> lineKeys = new List<string>(someJobs[z].Keys);
+                    for (int i = 0; i < lineKeys.Count(); i++)
+                    {
+                        Console.WriteLine(lineKeys[i] + ": " + lines[i]);
+                    }
+                    Console.WriteLine("**************************************");
+                    //} 
+                }
+
+            }
+
+            }
         }
-    }
 }
